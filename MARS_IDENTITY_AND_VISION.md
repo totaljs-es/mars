@@ -1,5 +1,8 @@
 <p align="center">
-  <img src="branding/MARS_logo2.png" alt="MARS" width="250" height="250">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="branding/mars-logo-horizontal-dark.svg">
+    <img src="branding/mars-logo-horizontal.svg" alt="MARS — Modular Architecture for Resource-constrained Systems" width="480">
+  </picture>
 </p>
 
 # MARS — Identity, Name and Project Vision
@@ -108,6 +111,7 @@ MARS should become an embedded runtime that equipment manufacturers license beca
 - **Owner:** Spanish Total.js
 - **Relationship:** independent product inspired by Total.js, not "Total.js Rust" or "Total.js MARS"
 - **Space connection:** origin and flagship market, not the only market
+- **Visual identity:** the logo carries only the MARS symbol, the MARS wordmark and the acronym, with no other brand. Colours, typography and usage rules are in [branding/BRAND.md](branding/BRAND.md).
 
 ---
 

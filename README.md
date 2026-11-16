@@ -1,5 +1,8 @@
 <p align="center">
-  <img src="branding/MARS_logo.png" alt="MARS" width="250" height="250">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="branding/mars-logo-dark.svg">
+    <img src="branding/mars-logo.svg" alt="MARS — Modular Architecture for Resource-constrained Systems" width="400">
+  </picture>
 </p>
 
 # MARS 🚀
@@ -124,6 +127,7 @@ These are references, not endorsements, partnerships or claims of compliance. In
 | Document | Content |
 | --- | --- |
 | [MARS_IDENTITY_AND_VISION.md](MARS_IDENTITY_AND_VISION.md) | Name, positioning, product structure and non-goals |
+| [branding/BRAND.md](branding/BRAND.md) | Logo, colours, typography and usage rules |
 
 Technical specifications and benchmark results are shared with prospective clients on request.
 
