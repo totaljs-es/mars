@@ -18,7 +18,8 @@ Clients license a minimal core plus only the modules they need. Each module is c
 
 ## See it
 
-- **Website:** [`docs/`](docs/index.html), published with GitHub Pages
+- **Website:** https://totaljs-es.github.io/mars/
+- **Contact:** hola@totaljs.es
 - **Demo video (43 s):** one flight software run shown on two screens, on board and on the ground: [MP4](docs/assets/video/mars-demo.mp4) · [WebM](docs/assets/video/mars-demo.webm)
 - **Screenshots:** [`docs/assets/screens/`](docs/assets/screens/)
 
