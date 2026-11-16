@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1200" height="900" viewBox="0 0 1200 900" role="img" aria-label="MARS Total.js Aerospace logo">
+<defs>
+ <radialGradient id="bg"><stop stop-color="#0a1837"/><stop offset="1" stop-color="#020817"/></radialGradient>
+ <radialGradient id="planet" cx="30%" cy="18%" r="85%"><stop stop-color="#ffcc56"/><stop offset=".22" stop-color="#ff8b12"/><stop offset=".58" stop-color="#f34b0c"/><stop offset=".83" stop-color="#b91d17"/><stop offset="1" stop-color="#73122a"/></radialGradient>
+ <radialGradient id="crater"><stop stop-color="#7c1015"/><stop offset=".72" stop-color="#c32a10"/><stop offset="1" stop-color="#ff9b24"/></radialGradient>
+ <linearGradient id="orbit" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e7f4ff"/><stop offset=".5" stop-color="#fff"/><stop offset="1" stop-color="#b6d6ff"/></linearGradient>
+ <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="13"/></filter>
+ <clipPath id="disk"><circle cx="605" cy="325" r="218"/></clipPath>
+</defs>
+<rect width="1200" height="900" fill="url(#bg)"/>
+<circle cx="605" cy="325" r="228" fill="#f75b15" opacity=".3" filter="url(#glow)"/>
+<circle cx="605" cy="325" r="218" fill="url(#planet)"/>
+<g clip-path="url(#disk)">
+ <path d="M389 337 C460 275 522 296 566 341 C631 411 691 341 826 269 L850 540 388 548Z" fill="#9f231a" opacity=".16"/>
+ <path d="M410 194 C482 121 544 128 605 132" fill="none" stroke="#ffe8a2" stroke-width="24" opacity=".12"/>
+ <g><ellipse cx="494" cy="260" rx="32" ry="27" transform="rotate(-32 494 260)" fill="url(#crater)"/><ellipse cx="650" cy="198" rx="48" ry="35" transform="rotate(-12 650 198)" fill="url(#crater)"/><ellipse cx="536" cy="361" rx="44" ry="39" fill="url(#crater)"/><ellipse cx="711" cy="449" rx="36" ry="28" transform="rotate(-25 711 449)" fill="url(#crater)"/></g>
+</g>
+<!-- Back portion of orbital ellipse -->
+<path d="M807 181 C902 145 929 194 851 292" fill="none" stroke="url(#orbit)" stroke-width="14" stroke-linecap="round"/>
+<!-- Foreground swoosh -->
+<path d="M393 375 C317 487 414 522 592 478 C728 446 838 374 892 272" fill="none" stroke="url(#orbit)" stroke-width="17" stroke-linecap="round"/>
+<path d="M889 107 Q895 151 933 158 Q895 165 889 208 Q883 165 845 158 Q883 151 889 107Z" fill="#fff"/>
+<text x="600" y="690" fill="#f7f9ff" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="172" font-weight="900" letter-spacing="8">MARS</text>
+<path d="M512 674 L535 628 L558 674Z" fill="#ff7219"/>
+<path d="M230 760 H305 M895 760 H970" stroke="#ff7119" stroke-width="5"/>
+<text x="600" y="770" text-anchor="middle" fill="#e6eaf3" font-family="Arial,Helvetica,sans-serif" font-size="30" letter-spacing="10">TOTAL.JS AEROSPACE</text>
+</svg>
