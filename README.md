@@ -16,6 +16,12 @@
 
 Clients license a minimal core plus only the modules they need. Each module is compiled in or left out, so a device carries no code it does not use.
 
+## See it
+
+- **Website:** [`docs/`](docs/index.html), published with GitHub Pages
+- **Demo video (43 s):** one flight software run shown on two screens, on board and on the ground: [MP4](docs/assets/video/mars-demo.mp4) · [WebM](docs/assets/video/mars-demo.webm)
+- **Screenshots:** [`docs/assets/screens/`](docs/assets/screens/)
+
 ## Why Rust
 
 Space and industrial devices have hard limits on RAM, flash, CPU time, power and physical access. A JavaScript runtime such as Node.js, and therefore Total.js itself, needs far more memory and processing than these devices offer.

@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MARS — Modular Architecture for Resource-constrained Systems</title>
+<meta name="description" content="MARS is a small, modular flight-software core in Rust for satellites and resource-constrained systems: about 6.3 KB of flash for the whole core, no heap, and it runs inside NASA cFS.">
+<meta property="og:title" content="MARS — Modular Architecture for Resource-constrained Systems">
+<meta property="og:description" content="Small core. Purpose-built modules. Measurable resources.">
+<meta property="og:image" content="assets/brand/mars-social.png">
+<meta name="theme-color" content="#0B1220">
+<link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0B1220; --deep: #1B2A4A; --panel: #111A2E; --panel-2: #16223A; --line: #24324F;
+    --white: #F5F7FA; --steel: #8B95A7; --muted: #5E6B84; --orange: #F05A28;
+    --good: #2FB67C; --warn: #F2B33D; --crit: #EF4D5A; --info: #6EA8FE;
+    --display: "Space Grotesk", Inter, system-ui, sans-serif; --sans: Inter, system-ui, sans-serif; --mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--navy); color: var(--white); font: 16px/1.6 var(--sans); }
+  a { color: var(--white); }
+  img, video { max-width: 100%; display: block; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+  section { padding: 88px 0; border-top: 1px solid rgba(36,50,79,.6); }
+  h1, h2, h3 { font-family: var(--display); margin: 0; line-height: 1.15; }
+  h2 { font-size: clamp(28px, 3.4vw, 40px); margin-bottom: 14px; }
+  h3 { font-size: 19px; margin-bottom: 6px; }
+  .eyebrow { font: 600 12px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--orange); margin-bottom: 14px; }
+  .lead { color: var(--steel); font-size: 18px; max-width: 760px; margin: 0 0 36px; }
+  .muted { color: var(--steel); }
+  code, .mono { font-family: var(--mono); font-size: .92em; }
+
+  nav { position: sticky; top: 0; z-index: 10; background: rgba(11,18,32,.82); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(36,50,79,.6); }
+  nav .wrap { display: flex; align-items: center; gap: 28px; height: 64px; }
+  nav .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  nav .brand img:first-child { width: 30px; height: 30px; } nav .brand img:last-child { height: 16px; width: auto; }
+  nav .links { display: flex; gap: 22px; margin-left: auto; font-size: 14px; }
+  nav .links a { color: var(--steel); text-decoration: none; } nav .links a:hover { color: var(--white); }
+
+  .hero { padding: 72px 0 64px; border: 0; background: radial-gradient(1100px 520px at 50% -160px, var(--deep), transparent); }
+  .hero .acr { font: 500 13px var(--display); letter-spacing: .2em; color: var(--steel); margin-bottom: 18px; }
+  .hero .acr b { color: var(--orange); font-weight: 700; }
+  .hero h1 { font-size: clamp(36px, 5.2vw, 64px); max-width: 980px; }
+  .hero h1 em { font-style: normal; color: var(--orange); }
+  .hero p { color: var(--steel); font-size: 19px; max-width: 760px; margin: 20px 0 30px; }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 44px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: 10px; font-weight: 600; text-decoration: none; border: 1px solid var(--line); background: var(--panel-2); }
+  .btn.primary { background: var(--orange); border-color: var(--orange); }
+  .btn:hover { filter: brightness(1.1); }
+  .video { border-radius: 16px; overflow: hidden; border: 1px solid var(--line); box-shadow: 0 40px 100px rgba(0,0,0,.5); background: #04070D; }
+  .video video { width: 100%; height: auto; }
+  .note { color: var(--muted); font-size: 13px; margin-top: 12px; }
+
+  .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 44px; }
+  .kpi { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; }
+  .kpi b { display: block; font: 700 30px var(--display); }
+  .kpi span { color: var(--steel); font-size: 14px; }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .shot { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .shot img { width: 100%; }
+  .shot .cap { padding: 14px 18px 18px; }
+  .shot .tag { display: inline-block; font: 600 11px var(--mono); letter-spacing: .1em; padding: 3px 9px; border-radius: 6px; margin-bottom: 8px; }
+  .tag.onboard { background: rgba(240,90,40,.16); color: var(--orange); } .tag.ground { background: rgba(110,168,254,.15); color: var(--info); }
+  .gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin-top: 20px; }
+  .gallery figure { margin: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .gallery figcaption { padding: 12px 16px 16px; color: var(--steel); font-size: 14.5px; }
+  .gallery figcaption b { color: var(--white); }
+  .gallery .wide { grid-column: span 2; }
+
+  .grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .svc { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 20px; }
+  .svc .ico { width: 34px; height: 34px; border-radius: 9px; background: rgba(240,90,40,.14); color: var(--orange); display: grid; place-items: center; font: 700 15px var(--mono); margin-bottom: 12px; }
+  .svc p { color: var(--steel); margin: 0; font-size: 15px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--steel); font: 600 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+  td.num { font: 600 15px var(--mono); white-space: nowrap; }
+  .tablebox { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow-x: auto; }
+  .tablebox table { min-width: 640px; }
+
+  .rules { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 28px; margin: 0; padding: 0; list-style: none; }
+  .rules li { padding-left: 26px; position: relative; color: var(--steel); }
+  .rules li::before { content: ""; position: absolute; left: 0; top: 9px; width: 10px; height: 10px; border-radius: 50%; background: var(--orange); }
+  .rules b { color: var(--white); }
+
+  .steps { counter-reset: s; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  .step { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 20px; }
+  .step::before { counter-increment: s; content: counter(s); display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--orange); font: 700 14px var(--display); margin-bottom: 12px; }
+  .step p { color: var(--steel); margin: 0; font-size: 15px; }
+
+  .status { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .status .box { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px 24px; }
+  .status ul { margin: 10px 0 0; padding-left: 20px; color: var(--steel); }
+  .status li { margin: 6px 0; }
+  .ok { color: var(--good); } .todo { color: var(--warn); }
+
+  footer { border-top: 1px solid rgba(36,50,79,.6); padding: 36px 0 48px; color: var(--muted); font-size: 14px; }
+  footer .wrap { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
+  footer img { width: 26px; height: 26px; }
+  footer .sp { flex: 1; }
+  footer a { color: var(--steel); }
+
+  @media (max-width: 960px) {
+    .kpis, .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .two, .status, .rules { grid-template-columns: 1fr; }
+    nav .links { display: none; }
+  }
+  @media (max-width: 620px) {
+    section { padding: 64px 0; }
+    .wrap { padding: 0 16px; }
+    .kpis, .grid3, .steps, .gallery { grid-template-columns: 1fr; }
+    .gallery .wide { grid-column: auto; }
+  }
+</style>
+</head>
+<body>
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="MARS home"><img src="assets/brand/mars-mark-dark.svg" alt=""><img src="assets/brand/mars-wordmark-dark.svg" alt="MARS"></a>
+    <div class="links"><a href="#screens">Demo</a><a href="#core">Core</a><a href="#numbers">Numbers</a><a href="#cfs">NASA cFS</a><a href="#adopt">Adoption</a><a href="#status">Status</a></div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="acr"><b>M</b>ODULAR <b>A</b>RCHITECTURE FOR <b>R</b>ESOURCE-CONSTRAINED <b>S</b>YSTEMS</div>
+    <h1>A flight-software core in <em>6.3 KB</em> that checks everything before the ground sees it.</h1>
+    <p>MARS is a small, modular foundation in Rust for satellites and other resource-constrained systems. It validates every frame on board, keeps the spacecraft safe on its own, and plugs into the flight software teams already run, including NASA cFS.</p>
+    <div class="cta"><a class="btn primary" href="#screens">▶ Watch the demo</a><a class="btn" href="#core">What is in the core</a></div>
+    <div class="video">
+      <video controls muted playsinline preload="metadata" poster="assets/video/poster.png">
+        <source src="assets/video/mars-demo.webm" type="video/webm">
+        <source src="assets/video/mars-demo.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="note">43 seconds, no sound. The real MARS core drives the run; the hardware and the radio link are simulated.</div>
+    <div class="kpis">
+      <div class="kpi"><b>6,348 B</b><span>flash for the whole core plus telemetry, on Cortex-M</span></div>
+      <div class="kpi"><b>0 B</b><span>static RAM, no heap, no threads</span></div>
+      <div class="kpi"><b>10 / 10</b><span>integration checks inside NASA cFS v7.0.1</span></div>
+      <div class="kpi"><b>C &amp; Rust</b><span>adopt it one component at a time</span></div>
+    </div>
+  </div>
+</header>
+
+<section id="screens">
+  <div class="wrap">
+    <div class="eyebrow">One flight, two screens</div>
+    <h2>On board, MARS decides. On the ground, you understand why.</h2>
+    <p class="lead">The demo shows the same run twice: what the flight computer does with each frame, and what mission control receives. Nothing reaches the ground without being checked first, and nothing on board needs text to explain itself.</p>
+    <div class="two">
+      <div class="shot">
+        <img src="assets/screens/03-overheat-alarms-onboard.png" alt="On-board console: every received frame validated, alarms flagged, events queued as ids" loading="lazy">
+        <div class="cap"><span class="tag onboard">ON BOARD</span><h3>The flight computer</h3><p class="muted">Every frame is checked for length, sync, version, CRC and limits before anything is sent down. Events leave as ids and four bytes: no strings, no heap.</p></div>
+      </div>
+      <div class="shot">
+        <img src="assets/screens/03-overheat-alarms-ground.png" alt="Ground console: telemetry charts, decoded events and command console" loading="lazy">
+        <div class="cap"><span class="tag ground">GROUND</span><h3>Mission control</h3><p class="muted">The ground decodes the same ids with its dictionary, plots only data MARS accepted, and sees every command answered with a reason.</p></div>
+      </div>
+    </div>
+    <div class="gallery">
+      <figure class="wide"><img src="assets/screens/02-noise-held-back-both.png" alt="Noisy link: garbage frames rejected on board and summarised for the ground" loading="lazy"><figcaption><b>A noisy link.</b> Dozens of garbage frames are rejected on board; the ground receives one summary instead of a flood.</figcaption></figure>
+      <figure><img src="assets/screens/04-arm-and-fire-both.png" alt="Critical command refused without arming, executed after arming" loading="lazy"><figcaption><b>Arm, then fire.</b> POWER_OFF_BUS is refused until the ground arms it; the arm covers only the next command.</figcaption></figure>
+      <figure><img src="assets/screens/05-safe-mode-both.png" alt="Telemetry task silent, safe mode entered automatically, ground exit refused" loading="lazy"><figcaption><b>Safe mode on its own.</b> A silent task stops the watchdog from being fed; only the ground can leave safe mode, and only when health is good.</figcaption></figure>
+      <figure class="wide"><img src="assets/screens/06-after-watchdog-reset-both.png" alt="After the watchdog reset: boot 2, fault record names the failed component" loading="lazy"><figcaption><b>After the reset.</b> The fault record survives in A/B storage: boot #2 knows it was a watchdog reset and which component failed.</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section id="core">
+  <div class="wrap">
+    <div class="eyebrow">MARS Core</div>
+    <h2>The services every flight computer needs, and nothing else.</h2>
+    <p class="lead">NASA's two open flight-software frameworks, cFS and F´, grew independently towards almost the same core services. MARS keeps that common minimum, in Rust, with fixed memory and no hidden activity.</p>
+    <div class="grid3">
+      <div class="svc"><div class="ico">↻</div><h3>Lifecycle</h3><p>Explicit init, reset and fault states. Nothing starts or runs by itself.</p></div>
+      <div class="svc"><div class="ico">→</div><h3>Input → process → output</h3><p>Typed actions and byte processors on caller-owned buffers, wired at compile time.</p></div>
+      <div class="svc"><div class="ico">⏱</div><h3>Time</h3><p>Monotonic time from the platform, mission time corrected from the ground.</p></div>
+      <div class="svc"><div class="ico">!</div><h3>Events</h3><p>Ids, severity and four bytes in a fixed log. Floods are rate-limited and summarised.</p></div>
+      <div class="svc"><div class="ico">⌘</div><h3>Commands</h3><p>CRC-checked frames, a required authorisation policy, an answer with a reason for every command, and two-step arm-and-fire for critical ones.</p></div>
+      <div class="svc"><div class="ico">⚙</div><h3>Parameters</h3><p>Stage, validate, commit. A bad upload can never become active.</p></div>
+      <div class="svc"><div class="ico">♥</div><h3>Health</h3><p>Heartbeats with deadlines. The watchdog is fed only while every component is alive.</p></div>
+      <div class="svc"><div class="ico">▤</div><h3>Packets</h3><p>One CRC-protected envelope for everything sent to the ground: one stream, one decoder.</p></div>
+      <div class="svc"><div class="ico">⧉</div><h3>Persistent storage</h3><p>Every item kept in two copies with generation and CRC. Power can fail mid-write.</p></div>
+      <div class="svc"><div class="ico">⚑</div><h3>Fault record</h3><p>Boot count, reset reason and last fatal error, kept across resets.</p></div>
+      <div class="svc"><div class="ico">⛨</div><h3>Safe mode</h3><p>Entered automatically on silence, fatal errors or repeated resets; left only by ground command.</p></div>
+      <div class="svc"><div class="ico">≋</div><h3>Telemetry module</h3><p>The first module: frame validation, limits and alarms, records, sequence-gap tracking and housekeeping.</p></div>
+    </div>
+
+    <h3 style="margin:48px 0 14px">How it maps to NASA cFS and F´</h3>
+    <div class="tablebox">
+      <table>
+        <thead><tr><th>Service</th><th>cFS</th><th>F´</th><th>MARS</th></tr></thead>
+        <tbody>
+          <tr><td>Lifecycle</td><td>Executive Services</td><td>Components, topology</td><td>Explicit init / reset / faulted</td></tr>
+          <tr><td>Messaging</td><td>Software Bus</td><td>Typed ports</td><td>Compile-time wiring, caller-owned buffers</td></tr>
+          <tr><td>Time</td><td>Time Services</td><td>Time</td><td>Monotonic clock + mission-time correlation</td></tr>
+          <tr><td>Events</td><td>Event Services, binary filters</td><td>Event manager, throttling</td><td>Fixed log, rate limits, summaries</td></tr>
+          <tr><td>Commands</td><td>Commands over the bus</td><td>Command dispatcher</td><td>Authorised dispatch, reasons, arm-and-fire</td></tr>
+          <tr><td>Parameters</td><td>Table Services</td><td>Parameter database</td><td>Stage → validate → commit</td></tr>
+          <tr><td>Health</td><td>Health &amp; Safety app</td><td>Health (ping)</td><td>Deadlines and the watchdog decision</td></tr>
+          <tr><td>Persistence</td><td>Critical Data Store</td><td>Files</td><td>A/B copies with generation and CRC</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note">Mapping drawn from the public architecture of cFS and F´.</div>
+
+    <h3 style="margin:48px 0 18px">Design rules</h3>
+    <ul class="rules">
+      <li><b>Nothing runs by itself.</b> No threads, timers or scheduler inside the core; the integrator calls each component.</li>
+      <li><b>Fixed memory.</b> Every log, queue and table has a compile-time size. Full logs drop the oldest entry and count it.</li>
+      <li><b>No panics on external input.</b> Bounds, arithmetic and conversions are checked; the compiler enforces it.</li>
+      <li><b>Text lives on the ground.</b> The device sends ids; the ground dictionary turns them into sentences.</li>
+      <li><b>A bad upload never becomes active.</b> Parameters are checked into a staging slot and committed in one step.</li>
+      <li><b>Every command gets an answer.</b> Executed, or refused with the exact reason.</li>
+      <li><b>Safe mode is one-way for the software.</b> It enters on its own; only the ground can leave it.</li>
+      <li><b>Measured, not claimed.</b> Every number comes with target, toolchain, settings and method.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="numbers">
+  <div class="wrap">
+    <div class="eyebrow">Measured, not claimed</div>
+    <h2>Numbers, with the method behind them.</h2>
+    <p class="lead">Size measured on <span class="mono">thumbv7em-none-eabihf</span> (Cortex-M4F / M7), rustc 1.100.0, optimised for size with LTO, against an empty firmware image. Reproducible with one script.</p>
+    <div class="tablebox">
+      <table>
+        <thead><tr><th>What</th><th>Flash</th><th>Static RAM</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Telemetry pipeline with an 8-record queue</td><td class="num">1,969 B</td><td class="num">0 B</td><td>Frame validation, limits, records, counters</td></tr>
+          <tr><td><b>Whole core + telemetry</b></td><td class="num"><b>6,348 B</b></td><td class="num"><b>0 B</b></td><td>Events, health, commands, parameters, packets, A/B storage, faults, safe mode</td></tr>
+          <tr><td>Telemetry used from a C firmware</td><td class="num">2,917 B</td><td class="num">136 B</td><td>Through the C interface; the 136 B are the object the firmware declares</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><b>72</b><span>tests, with golden vectors computed independently</span></div>
+      <div class="kpi"><b>Every bit</b><span>every single-bit flip and every two-bit flip in the payload rejected; 200,000 random inputs without a panic</span></div>
+      <div class="kpi"><b>Miri</b><span>clean on the C interface, including callbacks into C</span></div>
+      <div class="kpi"><b>Sanitizers</b><span>C programs pass with address and undefined-behaviour checks</span></div>
+    </div>
+    <div class="note">Not measured yet: run-time stack, CPU cycles and energy on real hardware, and comparisons against equivalent C and plain-Rust implementations.</div>
+  </div>
+</section>
+
+<section id="cfs">
+  <div class="wrap">
+    <div class="eyebrow">Works with NASA cFS</div>
+    <h2>A standard cFS app, with MARS doing the checking.</h2>
+    <p class="lead">The MARS app builds against NASA cFS v7.0.1 like any other application: it validates raw frames on the software bus, publishes only valid records, reports through cFS Event Services and takes ground commands. An automated test boots cFS, sends commands over UDP and checks what cFS reports.</p>
+    <div class="tablebox">
+      <table>
+        <thead><tr><th>The test sends</th><th>cFS reports</th></tr></thead>
+        <tbody>
+          <tr><td>A frame with one flipped bit</td><td class="mono">MARS: frame rejected: checksum mismatch</td></tr>
+          <tr><td>New limits from the ground</td><td class="mono">MARS: limits set, temperature max 20.00 degC</td></tr>
+          <tr><td>The same good frame again</td><td class="mono">MARS: limit alarm 0x02 on seq 258: 21.50 degC, 3700 mV, -250 mA</td></tr>
+          <tr><td>Inconsistent limits</td><td class="mono">MARS: limits refused: invalid argument</td></tr>
+          <tr><td>12 garbage frames</td><td class="mono">only 8 events, thanks to the cFS binary filter</td></tr>
+          <tr><td>A housekeeping request</td><td class="mono">hk frames=15 accepted=2 alarms=1 bad_crc=1 … bad_sync=12</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note">10 of 10 checks pass. The app contains no cFS source code; cFS is Apache-2.0 and downloaded at build time.</div>
+  </div>
+</section>
+
+<section id="adopt">
+  <div class="wrap">
+    <div class="eyebrow">Adoption</div>
+    <h2>Keep your flight software. Add MARS one piece at a time.</h2>
+    <p class="lead">Nobody replaces years of flight heritage in one go. MARS is built to be dropped next to what already flies.</p>
+    <div class="steps">
+      <div class="step"><h3>Start with telemetry</h3><p>Validate frames and check limits with MARS, inside your existing app or as the MARS cFS app.</p></div>
+      <div class="step"><h3>Use it from C or C++</h3><p>One static library and one header. Fixed-size objects, status codes everywhere, no allocation.</p></div>
+      <div class="step"><h3>Add services</h3><p>Events, health, safe mode, commands with arm-and-fire, persistent storage: each one on its own.</p></div>
+      <div class="step"><h3>Go native in Rust</h3><p>New components written directly on MARS Core, with the compiler checking what C cannot.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="status">
+  <div class="wrap">
+    <div class="eyebrow">Status</div>
+    <h2>Early, honest, and moving.</h2>
+    <p class="lead">MARS is in early development. It is not flight-qualified or certified, and it does not claim to be: that takes mission-specific engineering, verification and review.</p>
+    <div class="status">
+      <div class="box"><h3 class="ok">Done</h3><ul>
+        <li>On-board core with the cFS / F´ service set</li>
+        <li>Telemetry module, wire formats and golden vectors</li>
+        <li>C interface for every service</li>
+        <li>NASA cFS app with an automated integration test</li>
+        <li>Size measured on Cortex-M, reproducible</li>
+      </ul></div>
+      <div class="box"><h3 class="todo">Next</h3><ul>
+        <li>Stack, cycles and energy on a real board</li>
+        <li>Comparisons with equivalent C and plain-Rust code</li>
+        <li>F´ component wrapper</li>
+        <li>Space profile: CCSDS formats and bus adapters</li>
+        <li>Pilots with Spanish aerospace teams</li>
+      </ul></div>
+    </div>
+    <h3 style="margin:44px 0 8px">Licensing</h3>
+    <p class="muted" style="max-width:760px">MARS is proprietary software by Spanish Total.js. Clients receive the source code of the core and the modules they license, to use, audit and adapt inside their own products. This website and repository present the product; they contain no source code.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <img src="assets/brand/mars-mark-dark.svg" alt="">
+    <span>MARS — Modular Architecture for Resource-constrained Systems · © 2026 Spanish Total.js</span>
+    <span class="sp"></span>
+    <a href="https://github.com/totaljs-es/mars/blob/main/branding/BRAND.md">Brand guide</a>
+    <a href="https://github.com/totaljs-es/mars">GitHub</a>
+  </div>
+</footer>
+</body>
+</html>
